@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 
 // Repositories
-import { createUrlsFields, getShortUrl, getShortUrlById, getShortUrlWithCount, updateCount } from "../repository/urls.repository.js";
+import { createUrlsFields, getShortUrl, getShortUrlById, getShortUrlWithCount, updateCount, deleteUrlById } from "../repository/urls.repository.js";
 import { searchSessionByToken } from "../repository/sessions.repository.js";
 
 export async function shortUrl(req, res) {
@@ -56,3 +56,13 @@ export async function openUrl(req, res) {
     res.status(500).send(err.message);
   };
 };
+
+export async function deleteUrl(req,res){
+  const { id } = req.params
+  try{
+      await deleteUrlById(id)
+      res.status(204).send("Url deleted successfully")
+  }catch (err) {
+    res.status(500).send(err.message);
+  };
+}
