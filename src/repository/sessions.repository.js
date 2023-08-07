@@ -19,3 +19,7 @@ export function updateSession(userID) {
 export function searchSession(userID) {
   return db.query(`SELECT * FROM sessions WHERE user_id=$1`, [userID]);
 }
+
+export function searchSessionByToken(token) {
+  return db.query(`SELECT * FROM sessions WHERE token=$1`, [token]);
+};
