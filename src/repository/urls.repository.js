@@ -28,3 +28,6 @@ export function deleteUrlById(id) {
   return db.query(`DELETE FROM urls WHERE id=$1;`, [id]);
 };
 
+export function selectAll(userID) {
+  return db.query(`SELECT id, short_url, url, visit_count FROM urls WHERE user_id=$1;`, [userID]);
+};

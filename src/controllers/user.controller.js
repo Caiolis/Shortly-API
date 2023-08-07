@@ -1,12 +1,14 @@
 import bcrypt from "bcrypt";
 
 // Repositories
-import { createUser, verifyEmail } from "../repository/user.repository.js";
+import { createUser, getUserById, sumVisits, verifyEmail } from "../repository/user.repository.js";
 import {
   createSession,
   searchSession,
   updateSession,
+  searchSessionByToken
 } from "../repository/sessions.repository.js";
+import { selectAll } from "../repository/urls.repository.js";
 
 export function signup(req, res) {
   const { name, email, password, confirmPassword } = req.body;
@@ -45,3 +47,24 @@ export async function signin(req, res) {
     res.status(500).send(err.message);
   }
 }
+
+export async function myInfo(req, res) {
+
+  try {
+    const query = await searchSessionByToken(res.locals.token);
+    const urlInfo = await selectAll(query.rows[0].user_id);
+    const userInfo = await getUserById(query.rows[0].user_id);
+    const count = await sumVisits(userInfo.rows[0].id);
+    
+    const result = {
+      "id": userInfo.rows[0].id,
+      "name": userInfo.rows[0].name,
+      "visitCount": count.rows[0].sum,
+      "shortenedUrls": urlInfo.rows
+    };
+
+    res.status(200).send(result)
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
