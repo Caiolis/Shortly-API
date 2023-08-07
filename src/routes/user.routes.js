@@ -1,17 +1,18 @@
 import { Router } from "express";
 
 // Schemas
-import { signupSchema } from "../schemas/user.schema.js";
+import { signinSchema, signupSchema } from "../schemas/user.schema.js";
 
 // Validations
 import { validateSchema } from "../middlewares/validateSchema.middleware.js";
-import { userValidation } from "../middlewares/userValidation.middleware.js";
+import { signupValidation, signinValidation } from "../middlewares/userValidation.middleware.js";
 
 // Controllers
-import { signup } from "../controllers/user.controller.js";
+import { signin, signup } from "../controllers/user.controller.js";
 
 const userRouter = Router();
 
-userRouter.post('/signup', validateSchema(signupSchema), userValidation, signup);
+userRouter.post('/signup', validateSchema(signupSchema), signupValidation, signup);
+userRouter.post('/signin', validateSchema(signinSchema), signinValidation, signin);
 
 export default userRouter;
