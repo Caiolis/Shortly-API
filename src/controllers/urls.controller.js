@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 
 // Repositories
-import { createUrlsFields, getShortUrl, getShortUrlById } from "../repository/urls.repository.js";
+import { createUrlsFields, getShortUrl, getShortUrlById, getShortUrlWithCount, updateCount } from "../repository/urls.repository.js";
 import { searchSessionByToken } from "../repository/sessions.repository.js";
 
 export async function shortUrl(req, res) {
@@ -39,4 +39,20 @@ export async function getUrlById(req, res) {
   } catch (err) {
     res.status(500).send(err.message);
   }
-}
+};
+
+export async function openUrl(req, res) {
+  const { shortUrl } = req.params;
+
+  try {
+    const query = await getShortUrlWithCount(shortUrl);
+    if (query.rows.length === 0) return res.status(404).send('Url was not found');
+
+    let count = query.rows[0].visit_count + 1;
+    await updateCount(count, query.rows[0].id)
+
+    res.redirect(200, query.rows[0].url)
+  } catch (err) {
+    res.status(500).send(err.message);
+  };
+};
